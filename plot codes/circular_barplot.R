@@ -19,7 +19,7 @@ data1<-example
 
 # Transform data in a tidy format (long format)
 data <- data1 %>% gather(key = "observation", value="value", -c(1,2)) 
-
+View(data)
 
 # Set a number of 'empty bar' to add at the end of each group
 empty_bar <- 2
@@ -51,7 +51,7 @@ base_data <- data %>%
 # prepare a data frame for grid (scales)
 grid_data <- base_data
 grid_data$end <- grid_data$end[ c( nrow(grid_data), 1:nrow(grid_data)-1)] + 1
-grid_data$start <- grid_data$start - 1
+grid_data$start <- grid_data$start -1
 grid_data <- grid_data[-1,]
 
 
@@ -60,18 +60,26 @@ grid_data <- grid_data[-1,]
 p <- ggplot(data) +      
   
   # Add the stacked bar
-  geom_bar(aes(x=as.factor(id), y=value, fill=observation), stat="identity", alpha=0.5) +
-  scale_fill_viridis(discrete=TRUE) +
+  geom_bar(aes(x=as.factor(id), 
+               y=value, fill=observation), 
+           stat="identity", alpha=0.5) +
+  #scale_fill_hue()+
+  #scale_fill_brewer()+
+  scale_fill_viridis(discrete=TRUE,option = "H")+ 
   
   # Add a val=100/75/50/25 lines. I do it at the beginning to make sur barplots are OVER it.
   geom_segment(data=grid_data, aes(x = end, y = 0, xend = start, yend = 0), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
-  geom_segment(data=grid_data, aes(x = end, y = 50, xend = start, yend = 50), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
-  geom_segment(data=grid_data, aes(x = end, y = 100, xend = start, yend = 100), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
-  geom_segment(data=grid_data, aes(x = end, y = 150, xend = start, yend = 150), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
-  geom_segment(data=grid_data, aes(x = end, y = 200, xend = start, yend = 200), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data=grid_data, aes(x = end, y = 10, xend = start, yend = 10), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data=grid_data, aes(x = end, y = 20, xend = start, yend = 20), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data=grid_data, aes(x = end, y = 30, xend = start, yend = 30), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data=grid_data, aes(x = end, y = 40, xend = start, yend = 40), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
+  
   
   # Add text showing the value of each 100/75/50/25 lines
-  ggplot2::annotate("text", x = rep(max(data$id),5), y = c(0, 50, 100, 150, 200), label = c("0", "50", "100", "150", "200") , color="grey", size=6 , angle=0, fontface="bold", hjust=1) +
+  ggplot2::annotate("text", x = rep(max(data$id),3),
+                    y = c(0, 10, 50), 
+                    label = c("0", "10", "50") , 
+                    color="grey", size=6 , angle=0, fontface="bold", hjust=1) +
   
   ylim(-150,max(label_data$tot, na.rm=T)) +
   theme_minimal() +
@@ -85,11 +93,16 @@ p <- ggplot(data) +
   coord_polar() +
   
   # Add labels on top of each bar
-  geom_text(data=label_data, aes(x=id, y=tot+10, label=individual, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=5, angle= label_data$angle, inherit.aes = FALSE ) +
+  geom_text(data=label_data, aes(x=id, y=tot+10, label=individual, hjust=hjust), 
+            color="black", fontface="bold",alpha=0.6, size=5, 
+            angle= label_data$angle, inherit.aes = FALSE ) +
   
   # Add base line information
   geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
   geom_text(data=base_data, aes(x = title, y = -18, label=group), hjust=c(1,1,0,0), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
+ 
 
+p
 # Save at png
-ggsave(p, file="output.png", width=10, height=10)
+ggsave(p, file="output.png", width=10, height=10, dpi = 700)
+
