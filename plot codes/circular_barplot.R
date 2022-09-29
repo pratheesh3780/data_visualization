@@ -14,8 +14,8 @@ data1 <- data.frame(
 )
 write.csv(data1, "data1.csv")
 
-attach(example)
-data1<-example
+attach(example3)
+data1<-example3
 
 # Transform data in a tidy format (long format)
 data <- data1 %>% gather(key = "observation", value="value", -c(1,2)) 
@@ -65,7 +65,8 @@ p <- ggplot(data) +
            stat="identity", alpha=0.5) +
   #scale_fill_hue()+
   #scale_fill_brewer()+
-  scale_fill_viridis(discrete=TRUE,option = "H")+ 
+  #scale_fill_viridis(discrete=TRUE,option = "H")+ 
+  scale_fill_viridis(discrete=TRUE)+ 
   
   # Add a val=100/75/50/25 lines. I do it at the beginning to make sur barplots are OVER it.
   geom_segment(data=grid_data, aes(x = end, y = 0, xend = start, yend = 0), colour = "grey", alpha=1, size=0.3 , inherit.aes = FALSE ) +
@@ -76,9 +77,9 @@ p <- ggplot(data) +
   
   
   # Add text showing the value of each 100/75/50/25 lines
-  ggplot2::annotate("text", x = rep(max(data$id),3),
-                    y = c(0, 10, 50), 
-                    label = c("0", "10", "50") , 
+  ggplot2::annotate("text", x = rep(max(data$id),5), 
+                    y = c(0, 50, 100, 150, 200), 
+                    label = c("0", "50", "100", "150", "200") , 
                     color="grey", size=6 , angle=0, fontface="bold", hjust=1) +
   
   ylim(-150,max(label_data$tot, na.rm=T)) +
@@ -94,15 +95,16 @@ p <- ggplot(data) +
   
   # Add labels on top of each bar
   geom_text(data=label_data, aes(x=id, y=tot+10, label=individual, hjust=hjust), 
-            color="black", fontface="bold",alpha=0.6, size=5, 
+            color="black", fontface="bold",alpha=0.6, size=4, 
             angle= label_data$angle, inherit.aes = FALSE ) +
   
   # Add base line information
   geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
-  geom_text(data=base_data, aes(x = title, y = -18, label=group), hjust=c(1,1,0,0), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
+  geom_text(data=base_data, aes(x = title, y = -18, label=group), hjust=c(1,1,0,0), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)+
+  theme_bw()
  
 
 p
 # Save at png
-ggsave(p, file="output.png", width=10, height=10, dpi = 700)
+ggsave(p, file="output1.png", width=10, height=10, dpi = 700)
 
